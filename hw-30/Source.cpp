@@ -1,6 +1,7 @@
 #include <iostream>
-#include "VehicleComponent.h"
+#include "Vehicle.h"
 #include "Engine.h"
+#include "Transmission.h"
 using namespace std;
 
 
@@ -100,13 +101,9 @@ using namespace std;
 	//Методи отримання даних (getType).
 	//Метод для відображення характеристик трансмісії.
 
-class VehicleComponent;
-class Engine;
-
-
 int main()
 {
-	VehicleComponent* auto1 = new VehicleComponent(new Engine(2.2, "Gus", 36));
+	Vehicle* auto1 = new Vehicle(new Engine(2.2, "Gus", 36), new Transmission("STR"));
 
 	//Необхідно створити класову ієрархію для опису транспортних засобів, їх характеристик
 	//(двигун, трансмісія), 

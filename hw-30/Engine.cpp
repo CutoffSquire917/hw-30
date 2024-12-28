@@ -8,26 +8,26 @@ Engine::Engine(const double volume, const std::string fuelType, const int horsep
 	std::cout << "Engine successfully created\n";
 }
 
-bool Engine::operator==(const VehicleComponent& other) const {
+bool Engine::operator==(const Vehicle& other) const {
 	return volume == other.getEngine()->getVolume() &&
 		fuelType == other.getEngine()->getFuelType() &&
 		horsepower == other.getEngine()->getHorsepower();
 }
-bool Engine::operator!=(const VehicleComponent& other) const {
+bool Engine::operator!=(const Vehicle& other) const {
 	return volume != other.getEngine()->getVolume() &&
 		fuelType != other.getEngine()->getFuelType() &&
 		horsepower != other.getEngine()->getHorsepower();
 }
-bool Engine::operator>=(const VehicleComponent& other) const {
+bool Engine::operator>=(const Vehicle& other) const {
 	return horsepower >= other.getEngine()->getHorsepower();
 }
-bool Engine::operator<=(const VehicleComponent& other) const {
+bool Engine::operator<=(const Vehicle& other) const {
 	return horsepower <= other.getEngine()->getHorsepower();
 }
-bool Engine::operator>(const VehicleComponent& other) const {
+bool Engine::operator>(const Vehicle& other) const {
 	return horsepower > other.getEngine()->getHorsepower();
 }
-bool Engine::operator<(const VehicleComponent& other) const {
+bool Engine::operator<(const Vehicle& other) const {
 	return horsepower < other.getEngine()->getHorsepower();
 }
 

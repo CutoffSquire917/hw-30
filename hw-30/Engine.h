@@ -4,9 +4,9 @@
 #pragma once
 
 #include <string>
-#include "VehicleComponent.h"
+#include "Vehicle.h"
 
-class Engine : public VehicleComponent {
+class Engine : public Vehicle {
 private:
 	double volume;
 	std::string fuelType;
@@ -14,12 +14,12 @@ private:
 public:
 	Engine(const double volume, const std::string fuelType, const int horsepower);
 
-	virtual bool operator==(const VehicleComponent& other) const override;
-	virtual bool operator!=(const VehicleComponent& other) const override;
-	virtual bool operator>=(const VehicleComponent& other) const override;
-	virtual bool operator<=(const VehicleComponent& other) const override;
-	virtual bool operator>(const VehicleComponent& other) const override;
-	virtual bool operator<(const VehicleComponent& other) const override;
+	virtual bool operator==(const Vehicle& other) const override;
+	virtual bool operator!=(const Vehicle& other) const override;
+	virtual bool operator>=(const Vehicle& other) const override;
+	virtual bool operator<=(const Vehicle& other) const override;
+	virtual bool operator>(const Vehicle& other) const override;
+	virtual bool operator<(const Vehicle& other) const override;
 
 	double getVolume() const;
 	std::string getFuelType() const;
