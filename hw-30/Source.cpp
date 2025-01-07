@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <string>
 #include "Vehicle.h"
 #include "LinkedList.h"
 #include "Node.h"
@@ -38,13 +39,13 @@ public:
 };
 class Motorcycle : public Vehicle {
 private:
-	double sunroof;
+	double consumption;
 public:
-	Motorcycle() : sunroof(0.0) {}
-	Motorcycle(const double sunroof) : sunroof(sunroof) {}
+	Motorcycle() : consumption(0.0) {}
+	Motorcycle(const double consumption) : consumption(consumption) {}
 	virtual void displayDetails() const override {
 		std::cout << "MotorcycleDetails()\n\t";
-		std::cout << "sunroof : " << sunroof << "\n";
+		std::cout << "consumption : " << consumption << "\n";
 	}
 };
 class Moped : public Vehicle {
@@ -55,57 +56,21 @@ public:
 	Moped(const double max_speed) : max_speed(max_speed) {}
 	virtual void displayDetails() const override {
 		std::cout << "MopedDetails()\n\t";
-		std::cout << "sunroof : " << max_speed << "\n";
+		std::cout << "max speed : " << max_speed << "\n";
 	}
 };
 
 string toLowercase(string text);
+bool isValidInt(const string toInt);
+bool isValidFloat(const string toFloat);
+bool isValidDouble(const string toDouble);
 
 void SearchByType(LinkedList* autopark);
 void SearchByYearProd(LinkedList* autopark);
 void SearchByPrice(LinkedList* autopark);
 void SearchBySeveralParameters(LinkedList* autopark);
 
-void InsertAtEnd_local(LinkedList* autopark) {
-	std::string vehicleType;
-	std::string brand;
-	std::string model;
-	int year;
-	double price;
-
-	double volume;
-	std::string fuelType;
-	int horsepower;
-
-	std::string transmissionType;
-	cout << "Enter vehicle type : ";
-	cin >> vehicleType;
-	cout << "Enter brand : ";
-	cin >> brand;
-	cout << "Enter model : ";
-	cin >> model;
-	cout << "Enter year : ";
-	cin >> year;
-	cout << "Enter price : ";
-	cin >> price;
-	cout << "Enter engine volume : ";
-	cin >> volume;
-	cout << "Enter fuel type : ";
-	cin >> fuelType;
-	cout << "Enter engine horsepower : ";
-	cin >> horsepower;
-	cout << "Enter transmission type : ";
-	cin >> transmissionType;
-	autopark->InsertAtEnd(
-		new Vehicle{vehicleType, brand, model, year, price,
-		new Engine(volume, fuelType, horsepower),
-		new Transmission(transmissionType)});
-	if (toLowercase(vehicleType) == "sedan") {
-		cout << "Enter availability of sunroof: ";
-		cin >> transmissionType;
-		autopark->GetMyVehicle(autopark->GetSize()-1).
-	}
-}
+void InsertAtEnd_local(LinkedList* autopark);
 
 int main() {
 	LinkedList* autopark = new LinkedList();
@@ -122,7 +87,8 @@ int main() {
 
 	autopark->InsertAtEnd(auto1, new Sedan(true));
 	autopark->InsertAtEnd(auto2, new Truck(222.2));
-	autopark->InsertAtEnd(auto3, new Sedan(false));
+	autopark->InsertAtEnd(auto3);
+	autopark->SetMyDetails(2, new Sedan(true));
 
 	string enter = "";
 	cout << "\tAutopark\n";
@@ -144,6 +110,7 @@ int main() {
 		}
 		cout << "\nEnter : ";
 		cin >> enter;
+		enter = toLowercase(enter);
 		cout << endl;
 		if (enter == "help") {
 			cout << "Enter number of the vehicle to get details\n"
@@ -153,7 +120,54 @@ int main() {
 				"Enter \"out\" for out\n\n";
 		}
 		else if (enter == "+") {
-			autopark->InsertAtEnd(Vehicle, new Sedan(true));
+			InsertAtEnd_local(autopark);
+		}
+		else if (enter == "-") {
+			cout << "Enter \"out\" to out\n"
+					"Enter index of the vehicle to delete it\n";
+			for (size_t i = 0; i < autopark->GetSize(); i++)
+			{
+				cout << i + 1 << " : " << autopark->GetMyVehicle(i).getBrand()
+					<< " " << autopark->GetMyVehicle(i).getModel() << endl;
+			}
+			string choice;
+			while (true) {
+				cout << "\nEnter : ";
+				cin >> choice;
+				choice = toLowercase(choice);
+				cout << endl;
+				if (isValidInt(choice)) {
+					int del_index = stoi(choice) - 1;
+					if (del_index < 0 || del_index >= int(autopark->GetSize()) || int(autopark->GetSize()) == 0) {
+						cout << "Index out of the range\n";
+					}
+					else {
+						cout << "Vehicle " << autopark->GetMyVehicle(del_index).getBrand()
+							<< " " << autopark->GetMyVehicle(del_index).getModel() << " is deleted\n\n";
+						autopark->RemoveAtIndex(del_index);
+						break;
+					}
+				}
+				else if (choice == "help") {
+					cout << "Enter \"out\" to out\n"
+							"Enter index of the vehicle to delete it\n";
+					for (size_t i = 0; i < autopark->GetSize(); i++)
+					{
+						cout << i + 1 << " : " << autopark->GetMyVehicle(i).getBrand()
+							<< " " << autopark->GetMyVehicle(i).getModel() << endl;
+					}
+				}
+				else if (choice == "out") {
+					break;
+				}
+				else {
+					cout << "Unknown command\n";
+				}
+
+			}
+		}
+		else {
+			cout << "Unknown command\n\n";
 		}
 	}
 	cout << "The program is finished\n";
@@ -282,6 +296,33 @@ string toLowercase(string text) {
 	}
 	return text;
 }
+bool isValidInt(const string toInt) {
+	try {
+		stoi(toInt);
+		return true;
+	}
+	catch (...) {
+		return false;
+	}
+}
+bool isValidFloat(const string toFloat) {
+	try {
+		stof(toFloat);
+		return true;
+	}
+	catch (...) {
+		return false;
+	}
+}
+bool isValidDouble(const string toDouble) {
+	try {
+		stod(toDouble);
+		return true;
+	}
+	catch (...) {
+		return false;
+	}
+}
 
 void SearchByType(LinkedList* autopark) {
 	int count = 0;
@@ -305,7 +346,7 @@ void SearchByType(LinkedList* autopark) {
 	cout << "\nThe count of finded vehicles with this type is " << count << endl;
 	cout << "To see this vehicles enter \"+\"\n"
 		"To out enter \"-\"\n"
-		"To refinding enter \"\\\"\n\n";
+		"To refinding enter \"/\"\n\n";
 	while (true) {
 		cout << "Enter : ";
 		cin >> enter;
@@ -322,12 +363,12 @@ void SearchByType(LinkedList* autopark) {
 			cout << "SearchByType is finished\n\n";
 			break;
 		}
-		else if (enter == "\\") {
+		else if (enter == "/") {
 			SearchByType(autopark);
 			break;
 		}
 		else {
-			cout << "Noname command\n\n";
+			cout << "Unknown command\n\n";
 		}
 	}
 }
@@ -353,7 +394,7 @@ void SearchByYearProd(LinkedList* autopark) {
 	cout << "\nThe count of finded vehicles with this year is " << count << endl;
 	cout << "To see this vehicles enter \"+\"\n"
 		"To out enter \"-\"\n"
-		"To refinding enter \"\\\"\n\n";
+		"To refinding enter \"/\"\n\n";
 	while (true) {
 		cout << "Enter : ";
 		cin >> enter;
@@ -370,12 +411,12 @@ void SearchByYearProd(LinkedList* autopark) {
 			cout << "SearchByYearProd is finished\n\n";
 			break;
 		}
-		else if (enter == "\\") {
+		else if (enter == "/") {
 			SearchByYearProd(autopark);
 			break;
 		}
 		else {
-			cout << "Noname command\n\n";
+			cout << "Unknown command\n\n";
 		}
 	}
 }
@@ -404,7 +445,7 @@ void SearchByPrice(LinkedList* autopark) {
 	cout << "\nThe count of finded vehicles with this price is " << count << endl;
 	cout << "To see this vehicles enter \"+\"\n"
 		"To out enter \"-\"\n"
-		"To refinding enter \"\\\"\n\n";
+		"To refinding enter \"/\"\n\n";
 	while (true) {
 		cout << "Enter : ";
 		cin >> enter;
@@ -421,12 +462,12 @@ void SearchByPrice(LinkedList* autopark) {
 			cout << "SearchByPrice is finished\n\n";
 			break;
 		}
-		else if (enter == "\\") {
+		else if (enter == "/") {
 			SearchByPrice(autopark);
 			break;
 		}
 		else {
-			cout << "Noname command\n\n";
+			cout << "Unknown command\n\n";
 		}
 	}
 }
@@ -460,7 +501,7 @@ void SearchBySeveralParameters(LinkedList* autopark) {
 	cout << "\nThe count of finded vehicles with this parameters is " << count << endl;
 	cout << "To see this vehicles enter \"+\"\n"
 		"To out enter \"-\"\n"
-		"To refinding enter \"\\\"\n\n";
+		"To refinding enter \"/\"\n\n";
 	while (true) {
 		cout << "Enter : ";
 		cin >> enter;
@@ -477,12 +518,246 @@ void SearchBySeveralParameters(LinkedList* autopark) {
 			cout << "SearchBySeveralParameters is finished\n\n";
 			break;
 		}
-		else if (enter == "\\") {
+		else if (enter == "/") {
 			SearchBySeveralParameters(autopark);
 			break;
 		}
 		else {
-			cout << "Noname command\n\n";
+			cout << "Unknown command\n\n";
+		}
+	}
+}
+
+void InsertAtEnd_local(LinkedList* autopark) {
+	std::string vehicleType;
+	std::string brand;
+	std::string model;
+	int year;
+	double price;
+
+	double volume;
+	std::string fuelType;
+	int horsepower;
+
+	std::string transmissionType;
+	cout << "Enter vehicle type : ";
+	cin >> vehicleType;
+	cout << "Enter brand : ";
+	cin >> brand;
+	cout << "Enter model : ";
+	cin >> model;
+	cout << "Enter year : ";
+	cin >> year;
+	cout << "Enter price : ";
+	cin >> price;
+	cout << "Enter engine volume : ";
+	cin >> volume;
+	cout << "Enter fuel type : ";
+	cin >> fuelType;
+	cout << "Enter engine horsepower : ";
+	cin >> horsepower;
+	cout << "Enter transmission type : ";
+	cin >> transmissionType;
+	autopark->InsertAtEnd(
+		new Vehicle{ vehicleType, brand, model, year, price,
+		new Engine(volume, fuelType, horsepower),
+		new Transmission(transmissionType) });
+	cout << endl;
+	autopark->GetMyVehicle(autopark->GetSize() - 1).printInfo();
+	autopark->GetMyDetails(autopark->GetSize() - 1).displayDetails();
+	cout << endl;
+	bool details_key = true;
+	string enter;
+	cout << "Enter \"=\" to confirm vehicle\n"
+		"Enter \"-\" to delete vehicle\n"
+		"Enter \"+\" to add details\n"
+		"Enter \"/\" to reset vehicle\n";
+	while (true) {
+		cout << "\nEnter : ";
+		cin >> enter;
+		cout << endl;
+		if (enter == "=") {
+			cout << "Creating vehicle is done\n";
+			break;
+		}
+		else if (enter == "-") {
+			autopark->RemoveAtEnd();
+			cout << "Creating vehicle is ruined\n\n";
+			break;
+		}
+		else if (enter == "/") {
+			autopark->RemoveAtEnd();
+			InsertAtEnd_local(autopark);
+			break;
+		}
+		else if (enter == "+") {
+			if (!details_key) {
+				cout << "Vehicle already have details\n";
+			}
+			else {
+				while (true) {
+					int details_choice = 0;
+					if (toLowercase(vehicleType) == "sedan") {
+						details_choice = 1;
+					}
+					else if (toLowercase(vehicleType) == "truck") {
+						details_choice = 2;
+					}
+					else if (toLowercase(vehicleType) == "motorcycle") {
+						details_choice = 3;
+					}
+					else if (toLowercase(vehicleType) == "moped") {
+						details_choice = 4;
+					}
+					else {
+						string details_choice_another;
+						cout << "Enter number of your vehicle type\n"
+							"1. Sedan\n"
+							"2. Truck\n"
+							"3. Motorcycle\n"
+							"4. Moped\n"
+							"Enter \"/\" to out\n";
+						cout << "\nEnter : ";
+						cin >> details_choice_another;
+						if (details_choice_another == "1") {
+							details_choice = 1;
+						}
+						else if (details_choice_another == "2") {
+							details_choice = 2;
+						}
+						else if (details_choice_another == "3") {
+							details_choice = 3;
+						}
+						else if (details_choice_another == "4") {
+							details_choice = 4;
+						}
+						else if (details_choice_another == "/") {
+							break;
+						}
+						else {
+							cout << "Unknown command\n";
+						}
+					}
+					cout << endl;
+					string details_enter;
+					if (details_choice == 1) {
+						cout << "Enter \"+\" to confirm sunroof\n"
+							"Enter \"-\" to disaible sunroof\n"
+							"Enter \"/\" to out\n";
+						while (true) {
+							cout << "\nEnter : ";
+							cin >> details_enter;
+							if (details_enter == "+") {
+								autopark->SetMyDetails(autopark->GetSize() - 1, new Sedan(true));
+								break;
+							}
+							else if (details_enter == "-") {
+								autopark->SetMyDetails(autopark->GetSize() - 1, new Sedan(false));
+								break;
+							}
+							else if (details_enter == "/") {
+								break;
+							}
+							else if (details_enter == "help") {
+								cout << "\nEnter \"+\" to confirm sunroof\n"
+									"Enter \"-\" to disaible sunroof\n"
+									"Enter \"/\" to out\n";
+							}
+							else {
+								cout << "\nUnknown command\n";
+							}
+						}
+					}
+					else if (details_choice == 2) {
+						cout << "Enter weight for load capacity\n"
+							"Enter \"/\" to out\n";
+						while (true) {
+							cout << "\nEnter : ";
+							cin >> details_enter;
+							if (isValidFloat(details_enter)) {
+								float load_capacity = stof(details_enter);
+								autopark->SetMyDetails(autopark->GetSize() - 1, new Truck(load_capacity));
+								break;
+							}
+							else if (details_enter == "/") {
+								break;
+							}
+							else if (details_enter == "help") {
+								cout << "\nEnter weight for load capacity\n"
+									"Enter \"/\" to out\n";
+							}
+							else {
+								cout << "\nUnknown command\n";
+							}
+						}
+					}
+					else if (details_choice == 3) {
+						cout << "Enter consumption for motorcycle\n"
+							"Enter \"/\" to out\n";
+						while (true) {
+							cout << "\nEnter : ";
+							cin >> details_enter;
+							if (isValidDouble(details_enter)) {
+								double consumption = stod(details_enter);
+								autopark->SetMyDetails(autopark->GetSize() - 1, new Motorcycle(consumption));
+								break;
+							}
+							else if (details_enter == "/") {
+								break;
+							}
+							else if (details_enter == "help") {
+								cout << "\nEnter consumption for motorcycle\n"
+									"Enter \"/\" to out\n";
+							}
+							else {
+								cout << "\nUnknown command\n";
+							}
+						}
+					}
+					else if (details_choice == 4) {
+						cout << "Enter max speed for moped\n"
+							"Enter \"/\" to out\n";
+						while (true) {
+							cout << "\nEnter : ";
+							cin >> details_enter;
+							if (isValidDouble(details_enter)) {
+								double max_speed = stod(details_enter);
+								autopark->SetMyDetails(autopark->GetSize() - 1, new Moped(max_speed));
+								break;
+							}
+							else if (details_enter == "/") {
+								break;
+							}
+							else if (details_enter == "help") {
+								cout << "\nEnter max speed for moped\n"
+									"Enter \"/\" to out\n";
+							}
+							else {
+								cout << "\nUnknown command\n";
+							}
+						}
+					}
+					else {
+						cout << "Unknown command\n";
+					}
+					if (&autopark->GetMyVehicle(autopark->GetSize() - 1) != &autopark->GetMyDetails(autopark->GetSize() - 1)) {
+						cout << endl;
+						autopark->GetMyVehicle(autopark->GetSize() - 1).printInfo();
+						autopark->GetMyDetails(autopark->GetSize() - 1).displayDetails();
+						details_key = false;
+					}
+					break;
+				}
+			}
+		}
+		else if (enter == "help") {
+			cout << "Enter \"=\" to confirm vehicle\n"
+				"Enter \"-\" to delete vehicle\n"
+				"Enter \"+\" to add details\n"
+				"Enter \"/\" to reset vehicle\n";
+		}
+		else {
+			cout << "Unknown command\n\n";
 		}
 	}
 }

@@ -50,8 +50,10 @@ void LinkedList::RemoveAtBeginning() {
 	}
 	else if (head->GetNext() == nullptr) {
 		delete head;
+		size--;
 		return;
 	}
+	std::cout << "Ehh\n";
 	Node* temp = head;
 	head = head->GetNext();
 	delete temp;
@@ -64,12 +66,16 @@ void LinkedList::RemoveAtEnd()
 	}
 	else if (head->GetNext() == nullptr) {
 		delete head;
+		size--;
 		return;
 	}
 	Node* temp = head;
+	Node* prev_temp = temp;
 	while (temp->GetNext() != nullptr) {
+		prev_temp = temp;
 		temp = temp->GetNext();
 	}
+	prev_temp->SetNext(nullptr);
 	delete temp;
 	size--;
 }
@@ -77,11 +83,14 @@ void LinkedList::RemoveAtIndex(int index) {
 	if (index < 0 || index >= size) {
 		throw std::out_of_range("LinkedList don't have enough indexes");
 	}
-	if (index == 0) {
+	if (head == nullptr) {
+		return;
+	}
+	else if (index == 0) {
 		RemoveAtBeginning();
 		return;
 	}
-	else if (index == size) {
+	else if (index == size-1) {
 		RemoveAtEnd();
 		return;
 	}
@@ -124,6 +133,18 @@ Vehicle& LinkedList::GetMyDetails(int index) {
 	else {
 		return temp->GetDetails();
 	}
+}
+void LinkedList::SetMyDetails(int index, Vehicle* details) {
+	if (index < 0 || index >= size) {
+		throw std::out_of_range("LinkedList don't have enough indexes");
+	}
+	int item = 0;
+	Node* temp = head;
+	while (item != index) {
+		temp = temp->GetNext();
+		item++;
+	}
+	temp->SetDetails(details);
 }
 LinkedList::~LinkedList() {
 	while (head != nullptr) {

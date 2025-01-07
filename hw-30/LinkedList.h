@@ -21,6 +21,7 @@ public:
 	void RemoveAtIndex(int index);
 	Vehicle& GetMyVehicle(int index);
 	Vehicle& GetMyDetails(int index);
+	void SetMyDetails(int index, Vehicle* details);
 	~LinkedList();
 };
 
