@@ -4,9 +4,7 @@
 #include "Engine.h"
 
 Engine::Engine(const double volume, const std::string fuelType, const int horsepower)
-	: volume(volume), fuelType(fuelType), horsepower(horsepower) {
-	std::cout << "Engine successfully created\n";
-}
+	: volume(volume), fuelType(fuelType), horsepower(horsepower) {}
 
 bool Engine::operator==(const Vehicle& other) const {
 	return volume == other.getEngine()->getVolume() &&
@@ -43,9 +41,9 @@ int Engine::getHorsepower() const {
 
 void Engine::printInfo() const {
 	std::cout << "EngineInfo()\n";
-	std::cout << "volume : " << volume << std::endl;
-	std::cout << "fuelType : " << fuelType << std::endl;
-	std::cout << "horsepower : " << horsepower << std::endl;
+	std::cout << "\tvolume : " << volume << std::endl;
+	std::cout << "\tfuelType : " << fuelType << std::endl;
+	std::cout << "\thorsepower : " << horsepower << std::endl;
 }
 
 #endif

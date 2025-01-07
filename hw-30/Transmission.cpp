@@ -4,9 +4,7 @@
 #include "Transmission.h"
 
 Transmission::Transmission(const std::string transmissionType)
-	: transmissionType(transmissionType) {
-	std::cout << "Transmission successfully created\n";
-}
+	: transmissionType(transmissionType) {}
 
 bool Transmission::operator==(const Vehicle& other) const {
 	return transmissionType == other.getTransmission()->getTransmissionType();
@@ -21,7 +19,7 @@ std::string Transmission::getTransmissionType() const {
 
 void Transmission::printInfo() const {
 	std::cout << "TransmissionInfo()\n";
-	std::cout << "transmissionType : " << transmissionType << std::endl;
+	std::cout << "\ttransmissionType : " << transmissionType << std::endl;
 }
 
 #endif
