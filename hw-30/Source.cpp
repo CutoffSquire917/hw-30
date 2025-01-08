@@ -71,30 +71,41 @@ void SearchByPrice(LinkedList* autopark);
 void SearchBySeveralParameters(LinkedList* autopark);
 
 void InsertAtEnd_local(LinkedList* autopark);
+void AddDetails_local(LinkedList* autopark, const int index);
+void GlobalSearch(LinkedList* autopark);
 
 int main() {
 	LinkedList* autopark = new LinkedList();
 
-	Vehicle* auto1 = new Vehicle("Sedan", "Audi", "A4", 2009, 1200.50,
-		new Engine(1.8, "gas", 200),
+	Vehicle* auto1 = new Vehicle("Sedan", "Audi", "A4", 2009, 3200.50,
+		new Engine(1.8, "gas", 120),
 		new Transmission("automatic"));
-	Vehicle* auto2 = new Vehicle("Truck", "Toyota", "RAV4", 2021, 1500.75,
+	Vehicle* auto2 = new Vehicle("Truck", "Toyota", "RAV4", 2021, 49300.75,
 		new Engine(2.5, "hybrid", 250),
 		new Transmission("mechanic"));
-	Vehicle* auto3 = new Vehicle("Sedan", "Audi", "A5", 2021, 1200.50,
-		new Engine(1.8, "disel", 200),
+	Vehicle* auto3 = new Vehicle("Sedan", "Audi", "A5", 2021, 32000.50,
+		new Engine(2, "gas", 150),
+		new Transmission("mechanic"));
+	Vehicle* auto4 = new Vehicle("Motorcycle", "BMW", "S1000RR", 2024, 20000.50,
+		new Engine(6.4, "etanol", 210),
+		new Transmission("automatic"));
+	Vehicle* auto5 = new Vehicle("Moped", "Honda", "PCX150", 2012, 20000.50,
+		new Engine(2, "gas", 13),
 		new Transmission("automatic"));
 
 	autopark->InsertAtEnd(auto1, new Sedan(true));
 	autopark->InsertAtEnd(auto2, new Truck(222.2));
 	autopark->InsertAtEnd(auto3);
 	autopark->SetMyDetails(2, new Sedan(true));
+	autopark->InsertAtEnd(auto4);
+	autopark->InsertAtEnd(auto5, new Moped(76.8));
 
 	string enter = "";
 	cout << "\tAutopark\n";
 	cout << "Enter number of the vehicle to get details\n"
 		"Enter \"+\" to add vehicle\n"
 		"Enter \"-\" to remove vehicle\n"
+		"Enter \"search\" to search with different parametrs\n"
 		"Enter \"help\" to get help\n"
 		"Enter \"out\" for out\n\n";
 	while (enter != "out") {
@@ -112,7 +123,52 @@ int main() {
 		cin >> enter;
 		enter = toLowercase(enter);
 		cout << endl;
-		if (enter == "help") {
+		if (isValidInt(enter)) {
+			int selected_enter = stoi(enter) - 1;
+			if (selected_enter < 0 && selected_enter >= int(autopark->GetSize())) {
+				cout << "Wrong index, take the index from list\n";
+				continue;
+			}
+			autopark->GetMyVehicle(selected_enter).printInfo();
+			autopark->GetMyDetails(selected_enter).displayDetails();
+			cout << "Enter \"+\" to add details\n"
+					"Enter \"-\" to delete vehicle\n"
+					"Enter \"/\" to out\n";
+			string choice;
+			while (true) {
+				cout << "\nEnter : ";
+				cin >> choice;
+				choice = toLowercase(choice);
+				cout << endl;
+				if (choice == "+") {
+					if (&autopark->GetMyVehicle(selected_enter) != &autopark->GetMyDetails(selected_enter)) {
+						cout << "The vehicle already has details\n";
+						continue;
+					}
+					AddDetails_local(autopark, selected_enter);
+				}
+				else if (choice == "-") {
+					autopark->RemoveAtIndex(selected_enter);
+					cout << "Vehicle is deleted\n";
+					break;
+				}
+				else if (choice == "help") {
+					cout << "Enter \"+\" to add details\n"
+							"Enter \"-\" to delete vehicle\n"
+							"Enter \"/\" to out";
+				}
+				else if (choice == "/") {
+					break;
+				}
+				else {
+					cout << "Unknown command\n";
+				}
+				cout << endl;
+				autopark->GetMyVehicle(selected_enter).printInfo();
+				autopark->GetMyDetails(selected_enter).displayDetails();
+			}
+		}
+		else if (enter == "help") {
 			cout << "Enter number of the vehicle to get details\n"
 				"Enter \"+\" to add vehicle\n"
 				"Enter \"-\" to remove vehicle\n"
@@ -166,125 +222,14 @@ int main() {
 
 			}
 		}
+		else if (enter == "search" || enter == "s") {
+			GlobalSearch(autopark);
+		}
 		else {
 			cout << "Unknown command\n\n";
 		}
 	}
 	cout << "The program is finished\n";
-
-	//SearchByType(autopark);
-	//SearchByYearProd(autopark);
-	//SearchByPrice(autopark);
-	//SearchBySeveralParameters(autopark);
-
-	//Необхідно створити класову ієрархію для опису транспортних засобів, їх характеристик
-	//(двигун, трансмісія), 
-	//а також реалізувати функції пошуку за різними параметрами. Вся інформація повинна бути
-	//організована у вигляді об'єктів класів з відповідними методами та атрибутами.
-	//
-	//3. Вимоги:
-	//
-	//3.1. Класи
-	//
-	//Engine (Двигун)
-	//
-	//Параметри:
-	//Об'єм двигуна (double).
-	//Тип пального (string).
-	//Потужність (horsepower) (int).
-	//
-	//Методи:
-	//Конструктори для ініціалізації.
-	//Оператори порівняння.
-	//Методи отримання даних (getVolume, getFuelType, getPower).
-	//Метод для відображення характеристик двигуна.
-	//
-	//
-	//Transmission (Трансмісія)
-	//
-	//Параметри:
-	//Тип трансмісії (string).
-	//Методи:
-	//Конструктори для ініціалізації.
-	//Оператори порівняння.
-	//Методи отримання даних (getType).
-	//Метод для відображення характеристик трансмісії.
-	//
-	//
-	//Vehicle (Транспортний засіб)
-	//
-	//Параметри:
-	//Тип транспортного засобу (string).
-	//Бренд (string).
-	//Модель (string).
-	//Рік випуску (int).
-	//Ціна (double).
-	//Двигун (Engine).
-	//Трансмісія (Transmission).
-	//
-	//Методи:
-	//Конструктори для ініціалізації.
-	//Оператори порівняння.
-	//Методи для отримання та встановлення даних (getTypeVehicle, getBrand, getModel, getYear,
-	//getPrice, getEngine, getTransmission тощо).
-	//Метод для відображення всіх характеристик транспортного засобу, включаючи двигун та трансмісію.
-	//
-	//Класи-нащадки:
-	//
-	//Sedan (Седан)
-	//Додаткові параметри: наявність люка (bool).
-	//Перевизначений метод displayDetails для відображення специфічних даних.
-	//Truck (Грузовик)
-	//Додаткові параметри: вантажопідйомність (float).
-	//Перевизначений метод displayDetails для відображення специфічних даних.
-	//Motorcycle (Мотоцикл)
-	//Додаткові параметри: витрати пального (double).
-	//Перевизначений метод displayDetails для відображення специфічних даних.
-	//Moped (Мопед)
-	//Додаткові параметри: максимальна швидкість (double).
-	//Перевизначений метод displayDetails для відображення специфічних даних.
-	//
-	//
-	//3.2. Функції пошуку:
-	//
-	//SearchByType — Функція для пошуку транспортних засобів за типом (наприклад, седан, вантажівка,
-	//мотоцикл).
-	//SearchByYearProd — Функція для пошуку за роком випуску.
-	//SearchByPrice — Функція для пошуку транспортних засобів за діапазоном цін (від мінімальної до
-	//максимальної ціни).
-	//SearchBySeveralParameters — Функція для пошуку транспортних засобів за кількома параметрами:
-	//Бренд.
-	//Модель.
-	//Рік випуску.
-	//3.4. Вимоги до коду:
-	//
-	//Класи повинні бути реалізовані з використанням принципів ООП:
-	//
-	//Наслідування (наприклад, класи Sedan, Truck тощо успадковують від Vehicle).
-	//Інкапсуляція (дані, такі як характеристики двигуна та трансмісії, приховані від прямого
-	//доступу і доступні через методи).
-	//Поліморфізм (перевизначення методів, наприклад, displayDetails() в наслідуваних класах).
-	//Методи:
-	//
-	//В класі Vehicle методи повинні дозволяти змінювати та отримувати дані про транспортний засіб.
-	//В класах-нащадках метод displayDetails() повинен бути перевизначений для виведення додаткових
-	//характеристик.
-	//Пошук:
-	//
-	//Функції пошуку повинні бути універсальними та ефективно шукати за потрібними параметрами.
-	//Необхідно обробляти помилки вводу, використовуючи виключення.
-	//4. Додаткові вимоги:
-	//
-	//Усі транспортні засоби повинні бути представлені як об'єкти класів, і з ними повинні бути
-	//можливі маніпуляції (додавання, пошук, виведення на екран).
-	//Для зручності взаємодії з користувачем всі виведені дані повинні бути відформатовані
-	//у вигляді читаємої строки.
-	//5. Очікувані результати:
-	//
-	//Початковий код у вигляді програми на C++ з описаними класами та функціями пошуку.
-	//Програма повинна коректно працювати для кількох транспортних засобів (наприклад, 5-10
-	//об'єктів типу Sedan, Truck, Motorcycle, Moped).
-	//Усі функції пошуку повинні повертати правильний результат.
 }
 
 string toLowercase(string text) {
@@ -363,6 +308,11 @@ void SearchByType(LinkedList* autopark) {
 			cout << "SearchByType is finished\n\n";
 			break;
 		}
+		else if (enter == "help") {
+			cout << "To see this vehicles enter \"+\"\n"
+					"To out enter \"-\"\n"
+					"To refinding enter \"/\"\n\n";
+		}
 		else if (enter == "/") {
 			SearchByType(autopark);
 			break;
@@ -410,6 +360,11 @@ void SearchByYearProd(LinkedList* autopark) {
 		else if (enter == "-") {
 			cout << "SearchByYearProd is finished\n\n";
 			break;
+		}
+		else if (enter == "help") {
+			cout << "To see this vehicles enter \"+\"\n"
+				"To out enter \"-\"\n"
+				"To refinding enter \"/\"\n\n";
 		}
 		else if (enter == "/") {
 			SearchByYearProd(autopark);
@@ -461,6 +416,11 @@ void SearchByPrice(LinkedList* autopark) {
 		else if (enter == "-") {
 			cout << "SearchByPrice is finished\n\n";
 			break;
+		}
+		else if (enter == "help") {
+			cout << "To see this vehicles enter \"+\"\n"
+				"To out enter \"-\"\n"
+				"To refinding enter \"/\"\n\n";
 		}
 		else if (enter == "/") {
 			SearchByPrice(autopark);
@@ -517,6 +477,11 @@ void SearchBySeveralParameters(LinkedList* autopark) {
 		else if (enter == "-") {
 			cout << "SearchBySeveralParameters is finished\n\n";
 			break;
+		}
+		else if (enter == "help") {
+			cout << "To see this vehicles enter \"+\"\n"
+				"To out enter \"-\"\n"
+				"To refinding enter \"/\"\n\n";
 		}
 		else if (enter == "/") {
 			SearchBySeveralParameters(autopark);
@@ -591,163 +556,16 @@ void InsertAtEnd_local(LinkedList* autopark) {
 			break;
 		}
 		else if (enter == "+") {
-			if (!details_key) {
-				cout << "Vehicle already have details\n";
+			if (&autopark->GetMyVehicle(autopark->GetSize()-1) != &autopark->GetMyDetails(autopark->GetSize() - 1)) {
+				cout << "The vehicle already has details\n";
+				continue;
 			}
-			else {
-				while (true) {
-					int details_choice = 0;
-					if (toLowercase(vehicleType) == "sedan") {
-						details_choice = 1;
-					}
-					else if (toLowercase(vehicleType) == "truck") {
-						details_choice = 2;
-					}
-					else if (toLowercase(vehicleType) == "motorcycle") {
-						details_choice = 3;
-					}
-					else if (toLowercase(vehicleType) == "moped") {
-						details_choice = 4;
-					}
-					else {
-						string details_choice_another;
-						cout << "Enter number of your vehicle type\n"
-							"1. Sedan\n"
-							"2. Truck\n"
-							"3. Motorcycle\n"
-							"4. Moped\n"
-							"Enter \"/\" to out\n";
-						cout << "\nEnter : ";
-						cin >> details_choice_another;
-						if (details_choice_another == "1") {
-							details_choice = 1;
-						}
-						else if (details_choice_another == "2") {
-							details_choice = 2;
-						}
-						else if (details_choice_another == "3") {
-							details_choice = 3;
-						}
-						else if (details_choice_another == "4") {
-							details_choice = 4;
-						}
-						else if (details_choice_another == "/") {
-							break;
-						}
-						else {
-							cout << "Unknown command\n";
-						}
-					}
-					cout << endl;
-					string details_enter;
-					if (details_choice == 1) {
-						cout << "Enter \"+\" to confirm sunroof\n"
-							"Enter \"-\" to disaible sunroof\n"
-							"Enter \"/\" to out\n";
-						while (true) {
-							cout << "\nEnter : ";
-							cin >> details_enter;
-							if (details_enter == "+") {
-								autopark->SetMyDetails(autopark->GetSize() - 1, new Sedan(true));
-								break;
-							}
-							else if (details_enter == "-") {
-								autopark->SetMyDetails(autopark->GetSize() - 1, new Sedan(false));
-								break;
-							}
-							else if (details_enter == "/") {
-								break;
-							}
-							else if (details_enter == "help") {
-								cout << "\nEnter \"+\" to confirm sunroof\n"
-									"Enter \"-\" to disaible sunroof\n"
-									"Enter \"/\" to out\n";
-							}
-							else {
-								cout << "\nUnknown command\n";
-							}
-						}
-					}
-					else if (details_choice == 2) {
-						cout << "Enter weight for load capacity\n"
-							"Enter \"/\" to out\n";
-						while (true) {
-							cout << "\nEnter : ";
-							cin >> details_enter;
-							if (isValidFloat(details_enter)) {
-								float load_capacity = stof(details_enter);
-								autopark->SetMyDetails(autopark->GetSize() - 1, new Truck(load_capacity));
-								break;
-							}
-							else if (details_enter == "/") {
-								break;
-							}
-							else if (details_enter == "help") {
-								cout << "\nEnter weight for load capacity\n"
-									"Enter \"/\" to out\n";
-							}
-							else {
-								cout << "\nUnknown command\n";
-							}
-						}
-					}
-					else if (details_choice == 3) {
-						cout << "Enter consumption for motorcycle\n"
-							"Enter \"/\" to out\n";
-						while (true) {
-							cout << "\nEnter : ";
-							cin >> details_enter;
-							if (isValidDouble(details_enter)) {
-								double consumption = stod(details_enter);
-								autopark->SetMyDetails(autopark->GetSize() - 1, new Motorcycle(consumption));
-								break;
-							}
-							else if (details_enter == "/") {
-								break;
-							}
-							else if (details_enter == "help") {
-								cout << "\nEnter consumption for motorcycle\n"
-									"Enter \"/\" to out\n";
-							}
-							else {
-								cout << "\nUnknown command\n";
-							}
-						}
-					}
-					else if (details_choice == 4) {
-						cout << "Enter max speed for moped\n"
-							"Enter \"/\" to out\n";
-						while (true) {
-							cout << "\nEnter : ";
-							cin >> details_enter;
-							if (isValidDouble(details_enter)) {
-								double max_speed = stod(details_enter);
-								autopark->SetMyDetails(autopark->GetSize() - 1, new Moped(max_speed));
-								break;
-							}
-							else if (details_enter == "/") {
-								break;
-							}
-							else if (details_enter == "help") {
-								cout << "\nEnter max speed for moped\n"
-									"Enter \"/\" to out\n";
-							}
-							else {
-								cout << "\nUnknown command\n";
-							}
-						}
-					}
-					else {
-						cout << "Unknown command\n";
-					}
-					if (&autopark->GetMyVehicle(autopark->GetSize() - 1) != &autopark->GetMyDetails(autopark->GetSize() - 1)) {
-						cout << endl;
-						autopark->GetMyVehicle(autopark->GetSize() - 1).printInfo();
-						autopark->GetMyDetails(autopark->GetSize() - 1).displayDetails();
-						details_key = false;
-					}
-					break;
-				}
+			AddDetails_local(autopark, int(autopark->GetSize() - 1));
+			if (&autopark->GetMyVehicle(autopark->GetSize() - 1) != &autopark->GetMyDetails(autopark->GetSize() - 1)) {
+				cout << endl;
+				autopark->GetMyVehicle(autopark->GetSize() - 1).printInfo();
+				autopark->GetMyDetails(autopark->GetSize() - 1).displayDetails();
+				details_key = false;
 			}
 		}
 		else if (enter == "help") {
@@ -758,6 +576,202 @@ void InsertAtEnd_local(LinkedList* autopark) {
 		}
 		else {
 			cout << "Unknown command\n\n";
+		}
+	}
+}
+void AddDetails_local(LinkedList* autopark, const int index) {
+	while (true) {
+		int details_choice = 0;
+		string vehicleType = toLowercase(autopark->GetMyVehicle(index).getVehicleType());
+		if (vehicleType == "sedan") {
+			details_choice = 1;
+		}
+		else if (toLowercase(vehicleType) == "truck") {
+			details_choice = 2;
+		}
+		else if (toLowercase(vehicleType) == "motorcycle") {
+			details_choice = 3;
+		}
+		else if (toLowercase(vehicleType) == "moped") {
+			details_choice = 4;
+		}
+		else {
+			string details_choice_another;
+			cout << "Enter number of your vehicle type\n"
+				"1. Sedan\n"
+				"2. Truck\n"
+				"3. Motorcycle\n"
+				"4. Moped\n"
+				"Enter \"/\" to out\n";
+			cout << "\nEnter : ";
+			cin >> details_choice_another;
+			if (details_choice_another == "1") {
+				details_choice = 1;
+			}
+			else if (details_choice_another == "2") {
+				details_choice = 2;
+			}
+			else if (details_choice_another == "3") {
+				details_choice = 3;
+			}
+			else if (details_choice_another == "4") {
+				details_choice = 4;
+			}
+			else if (details_choice_another == "/") {
+				break;
+			}
+			else {
+				cout << "Unknown command\n";
+			}
+		}
+		string details_enter;
+		if (details_choice == 1) {
+			cout << "Enter \"+\" to confirm sunroof\n"
+				"Enter \"-\" to disaible sunroof\n"
+				"Enter \"/\" to out\n";
+			while (true) {
+				cout << "\nEnter : ";
+				cin >> details_enter;
+				if (details_enter == "+") {
+					autopark->SetMyDetails(index, new Sedan(true));
+					break;
+				}
+				else if (details_enter == "-") {
+					autopark->SetMyDetails(index, new Sedan(false));
+					break;
+				}
+				else if (details_enter == "/") {
+					break;
+				}
+				else if (details_enter == "help") {
+					cout << "\nEnter \"+\" to confirm sunroof\n"
+						"Enter \"-\" to disaible sunroof\n"
+						"Enter \"/\" to out\n";
+				}
+				else {
+					cout << "\nUnknown command\n";
+				}
+			}
+		}
+		else if (details_choice == 2) {
+			cout << "Enter weight for load capacity\n"
+				"Enter \"/\" to out\n";
+			while (true) {
+				cout << "\nEnter : ";
+				cin >> details_enter;
+				if (isValidFloat(details_enter)) {
+					float load_capacity = stof(details_enter);
+					autopark->SetMyDetails(index, new Truck(load_capacity));
+					break;
+				}
+				else if (details_enter == "/") {
+					break;
+				}
+				else if (details_enter == "help") {
+					cout << "\nEnter weight for load capacity\n"
+						"Enter \"/\" to out\n";
+				}
+				else {
+					cout << "\nUnknown command\n";
+				}
+			}
+		}
+		else if (details_choice == 3) {
+			cout << "Enter consumption for motorcycle\n"
+				"Enter \"/\" to out\n";
+			while (true) {
+				cout << "\nEnter : ";
+				cin >> details_enter;
+				if (isValidDouble(details_enter)) {
+					double consumption = stod(details_enter);
+					autopark->SetMyDetails(index, new Motorcycle(consumption));
+					break;
+				}
+				else if (details_enter == "/") {
+					break;
+				}
+				else if (details_enter == "help") {
+					cout << "\nEnter consumption for motorcycle\n"
+						"Enter \"/\" to out\n";
+				}
+				else {
+					cout << "\nUnknown command\n";
+				}
+			}
+		}
+		else if (details_choice == 4) {
+			cout << "Enter max speed for moped\n"
+				"Enter \"/\" to out\n";
+			while (true) {
+				cout << "\nEnter : ";
+				cin >> details_enter;
+				if (isValidDouble(details_enter)) {
+					double max_speed = stod(details_enter);
+					autopark->SetMyDetails(index, new Moped(max_speed));
+					break;
+				}
+				else if (details_enter == "/") {
+					break;
+				}
+				else if (details_enter == "help") {
+					cout << "\nEnter max speed for moped\n"
+						"Enter \"/\" to out\n";
+				}
+				else {
+					cout << "\nUnknown command\n";
+				}
+			}
+		}
+		else {
+			cout << "Unknown command\n";
+		}
+		break;
+	}
+}
+void GlobalSearch(LinkedList* autopark) {
+	cout << "Enter number of search operation to use it\n"
+		"1. SearchByType (vehicle type)\n"
+		"2. SearchByYearProd (year of vehicle production)\n"
+		"3. SearchByPrice (year of vehicle price)\n"
+		"4. SearchBySeveralParameters (brand, model, year of vehicle)\n"
+		"Enter \"/\" to out\n";
+	string enter;
+	while (true) {
+		cout << "\nEnter : ";
+		cin >> enter;
+		cout << endl;
+		if (isValidInt(enter)) {
+			int selected_enter = stoi(enter);
+			if (selected_enter == 1) {
+				SearchByType(autopark);
+				break;
+			}
+			else if (selected_enter == 2) {
+				SearchByYearProd(autopark);
+				break;
+			}
+			else if (selected_enter == 3) {
+				SearchByPrice(autopark);
+				break;
+			}
+			else if (selected_enter == 4) {
+				SearchBySeveralParameters(autopark);
+				break;
+			}
+		}
+		else if (enter == "help") {
+			cout << "Enter number of search operation to use it\n"
+				"1. SearchByType (vehicle type)\n"
+				"2. SearchByYearProd (year of vehicle production)\n"
+				"3. SearchByPrice (year of vehicle price)\n"
+				"4. SearchBySeveralParameters (brand, model, year of vehicle)\n"
+				"Enter \"/\" to out\n";
+		}
+		else if (enter == "/") {
+			break;
+		}
+		else {
+			cout << "Unknown command\n";
 		}
 	}
 }

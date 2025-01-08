@@ -18,7 +18,6 @@ public:
     void SetDetails(Vehicle* details);
     Node* GetNext() const;
     void SetNext(Node* next);
-    ~Node();
 };
 
 #endif

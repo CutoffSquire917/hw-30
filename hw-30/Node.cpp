@@ -23,10 +23,5 @@ Node* Node::GetNext() const
 void Node::SetNext(Node* next) {
 	this->next = next;
 }
-Node::~Node() {
-	delete vehicle;
-	delete details;
-	delete next;
-}
 
 #endif
